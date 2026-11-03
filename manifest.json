@@ -1,0 +1,12 @@
+{
+  "name": "ルシベル ランチャー",
+  "short_name": "ランチャー",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0e1222",
+  "theme_color": "#141a2e",
+  "icons": [
+    { "src": "icons/launcher-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/launcher-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ルシベル ランチャー</title>
+  <meta name="theme-color" content="#141a2e">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/launcher.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <style>
+    :root {
+      --bg1: #1b2340;
+      --bg2: #0e1222;
+      --text: #f2f0ea;
+      --sub: #9aa3bd;
+      --tile: rgba(255, 255, 255, 0.07);
+      --tile-line: rgba(255, 255, 255, 0.1);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(170deg, var(--bg1), var(--bg2)) fixed;
+      color: var(--text);
+      font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+      padding: max(28px, env(safe-area-inset-top)) 16px 32px;
+    }
+    main { max-width: 520px; margin: 0 auto; }
+
+    /* 時計 */
+    .clock { font-size: 4.8rem; font-weight: 200; letter-spacing: 0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+    .date { color: var(--sub); margin-top: 8px; font-size: 1.05rem; }
+    .greet { margin: 22px 0 26px; font-size: 1.15rem; }
+
+    /* アプリの並び */
+    .apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .app {
+      min-width: 0;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+      padding: 16px; border-radius: 22px; text-decoration: none; color: var(--text);
+      background: var(--tile); border: 1px solid var(--tile-line);
+      transition: transform 0.1s;
+    }
+    .app:active { transform: scale(0.97); }
+    .app img { width: 56px; height: 56px; border-radius: 15px; }
+    .app b { font-size: 1rem; }
+    .app span { font-size: 0.78rem; color: var(--sub); margin-top: -6px; }
+    .app.wide { grid-column: span 2; flex-direction: row; align-items: center; }
+    .app.wide div { display: flex; flex-direction: column; gap: 4px; }
+    .app.wide span { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="clock" class="clock">--:--</div>
+    <div id="date" class="date"></div>
+    <div id="greet" class="greet"></div>
+    <div id="apps" class="apps"></div>
+  </main>
+
+  <script>
+    // ===== 並べるアプリ（増やすときはここに1行足すだけ） =====
+    const APPS = [
+      { name: "ルシベル本部", desc: "タスクとAI（PCが起動中のとき）", icon: "icons/hq.png", url: "https://desktop-j7eonh1.tail11d529.ts.net/", wide: true },
+      { name: "my喫茶", desc: "コーヒーを淹れる", icon: "icons/kissa.png", url: "https://rusiberu.github.io/my-kissa/" },
+      { name: "レシピ帳", desc: "料理レシピと献立", icon: "icons/recipe.png", url: "https://rusiberu.github.io/recipe-ap/" },
+      { name: "ポイ活手帳", desc: "ポイントの記録", icon: "icons/poikatsu.png", url: "https://sparkling-lily-6a1099.netlify.app" },
+      { name: "かぞくチャット", desc: "3人だけのチャット", icon: "icons/chat.png", url: "https://kazoku-chat-rusi.netlify.app" },
+    ];
+
+    document.getElementById("apps").innerHTML = APPS.map((a) => `
+      <a class="app ${a.wide ? "wide" : ""}" href="${a.url}">
+        <img src="${a.icon}" alt="">
+        ${a.wide ? `<div><b>${a.name}</b><span>${a.desc}</span></div>` : `<b>${a.name}</b><span>${a.desc}</span>`}
+      </a>`).join("");
+
+    // ===== 時計とあいさつ =====
+    const WEEK = ["日", "月", "火", "水", "木", "金", "土"];
+    function tick() {
+      const d = new Date();
+      const h = d.getHours();
+      document.getElementById("clock").textContent = h + ":" + String(d.getMinutes()).padStart(2, "0");
+      document.getElementById("date").textContent = `${d.getMonth() + 1}月${d.getDate()}日（${WEEK[d.getDay()]}）`;
+      document.getElementById("greet").textContent =
+        h < 4 ? "遅くまでおつかれさま" : h < 11 ? "おはよう ☀️" : h < 17 ? "こんにちは" : "おつかれさま 🌙";
+    }
+    tick();
+    setInterval(tick, 10000);
+
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+  </script>
+</body>
+</html>
