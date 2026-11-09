@@ -1,9 +1,9 @@
 // オフラインでも開けるようにするための仕組み（Service Worker）
-const CACHE_NAME = "launcher-v1";
+const CACHE_NAME = "launcher-v2";
 const CACHE_FILES = [
   "./", "./index.html", "./manifest.json",
   "./icons/launcher.svg", "./icons/launcher-192.png", "./icons/launcher-512.png", "./icons/apple-touch-icon.png",
-  "./icons/hq.png", "./icons/kissa.png", "./icons/recipe.png", "./icons/poikatsu.png", "./icons/chat.png",
+  "./icons/hq.png", "./icons/kissa.png", "./icons/recipe.png", "./icons/poikatsu.png", "./icons/chat.png", "./icons/vault.png",
 ];
 
 self.addEventListener("install", (event) => {
