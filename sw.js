@@ -1,9 +1,11 @@
 // オフラインでも開けるようにするための仕組み（Service Worker）
-const CACHE_NAME = "launcher-v2";
+// アプリの一覧(APPS)は apps.js から読む。アプリのアイコンはそこから自動で並べる
+importScripts("apps.js");
+const CACHE_NAME = "launcher-v3";
 const CACHE_FILES = [
-  "./", "./index.html", "./manifest.json",
+  "./", "./index.html", "./apps.js", "./manifest.json",
   "./icons/launcher.svg", "./icons/launcher-192.png", "./icons/launcher-512.png", "./icons/apple-touch-icon.png",
-  "./icons/hq.png", "./icons/kissa.png", "./icons/recipe.png", "./icons/poikatsu.png", "./icons/chat.png", "./icons/vault.png",
+  ...APPS.map((a) => "./" + a.icon),
 ];
 
 self.addEventListener("install", (event) => {
@@ -14,7 +16,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(keys.filter((key) => key.startsWith("launcher-") && key !== CACHE_NAME) /* 同じ住所のほかのアプリのキャッシュは消さない */.map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });

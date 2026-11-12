@@ -49,6 +49,12 @@
     .app.wide { grid-column: span 2; flex-direction: row; align-items: center; }
     .app.wide div { display: flex; flex-direction: column; gap: 4px; }
     .app.wide span { margin-top: 0; }
+
+    /* お知らせ・決まりの一言 */
+    .offline { margin-bottom: 14px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 200, 90, 0.14); border: 1px solid rgba(255, 200, 90, 0.3); font-size: 0.85rem; line-height: 1.5; }
+    .offline[hidden] { display: none; }
+    .rule { margin: 22px 4px 0; color: var(--sub); font-size: 0.78rem; line-height: 1.6; }
+    .rule b { color: var(--text); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -56,20 +62,14 @@
     <div id="clock" class="clock">--:--</div>
     <div id="date" class="date"></div>
     <div id="greet" class="greet"></div>
+    <div id="offline" class="offline" hidden>📴 いまはオフラインです。電波が戻ってから開いてください（一度開いたことのあるアプリは、オフラインでも開けることがあります）</div>
     <div id="apps" class="apps"></div>
+    <p class="rule">記録は、開いた場所（ホーム画面・ブラウザ）ごとに別々に保存されます。アプリは<b>いつもこのランチャーから</b>開いてください。</p>
   </main>
 
+  <script src="apps.js"></script>
   <script>
-    // ===== 並べるアプリ（増やすときはここに1行足すだけ） =====
-    const APPS = [
-      { name: "ルシベル本部", desc: "タスクとAI（PCが起動中のとき）", icon: "icons/hq.png", url: "https://desktop-j7eonh1.tail11d529.ts.net/", wide: true },
-      { name: "my喫茶", desc: "コーヒーを淹れる", icon: "icons/kissa.png", url: "https://rusiberu.github.io/my-kissa/" },
-      { name: "レシピ帳", desc: "料理レシピと献立", icon: "icons/recipe.png", url: "https://rusiberu.github.io/recipe-ap/" },
-      { name: "ポイ活手帳", desc: "ポイントの記録", icon: "icons/poikatsu.png", url: "https://sparkling-lily-6a1099.netlify.app" },
-      { name: "かぞくチャット", desc: "3人だけのチャット", icon: "icons/chat.png", url: "https://kazoku-chat-rusi.netlify.app" },
-      { name: "パスワード金庫", desc: "IDとパスワードの保管", icon: "icons/vault.png", url: "https://rusiberu.github.io/password-vault/" },
-    ];
-
+    // アプリの一覧(APPS)は apps.js にある
     document.getElementById("apps").innerHTML = APPS.map((a) => `
       <a class="app ${a.wide ? "wide" : ""}" href="${a.url}">
         <img src="${a.icon}" alt="">
@@ -88,6 +88,14 @@
     }
     tick();
     setInterval(tick, 10000);
+
+    // ===== オフラインのお知らせ =====
+    function showOffline() {
+      document.getElementById("offline").hidden = navigator.onLine;
+    }
+    showOffline();
+    addEventListener("online", showOffline);
+    addEventListener("offline", showOffline);
 
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
   </script>
