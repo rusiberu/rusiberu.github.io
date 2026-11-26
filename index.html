@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>つみっこ舎｜保育士とAIの社員が作る、小さなアプリの会社ごっこ</title>
+<meta name="description" content="保育士とAIの社員たちが、小さなアプリを積み木みたいに作る会社ごっこ「つみっこ舎」です。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="つみっこ舎｜保育士とAIの社員が作る、小さなアプリの会社ごっこ">
+<meta property="og:description" content="保育士とAIの社員たちが、小さなアプリを積み木みたいに作る会社ごっこです。">
+<meta property="og:url" content="https://rusiberu.github.io/">
+<meta property="og:image" content="https://rusiberu.github.io/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- つみっこ舎HP 本番（2026-11-26・完成図 第4版から。11/26 社員4人×専門家の見直しを反映）。HTMLとCSSだけ（JSなし）
+     本部・フロアの守り：本物の画面写真は使わない（図はイメージ）／リンク・住所なし／中身は作りもの／動かし方・つなぎ方の細部は書かない
+     色の決まり＝ベース（クリーム・白）7割／メイン（屋根の茶色）2.5割／アクセント（積み木の4色）0.5割
+     白い文字をのせる色は「-dk」（読みやすさの基準 4.5:1 以上） -->
+<style>
+  :root {
+    --cream: #fdf7ec;
+    --paper: #ffffff;
+    --ink: #4a3a2c;
+    --sub: #6e5a49;
+    --brown: #b07a4a;
+    --roof: #8a5a32;
+    --wood: #e9c99a;
+    --red: #e8685a;
+    --yellow: #f0b23a;
+    --green: #6dbb72;
+    --blue: #4f98d8;
+    /* 白い文字をのせる用（濃いめ） */
+    --red-dk: #c2473b;
+    --blue-dk: #2a6fb0;
+    --green-dk: #2f7a39;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 66px; }
+  body {
+    margin: 0; background: var(--cream); color: var(--ink);
+    font-family: "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Yu Gothic", sans-serif;
+    line-height: 1.8;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  h2 { font-size: 1.35rem; margin: 6px 0 8px; line-height: 1.5; }
+  h3 { font-size: 1.1rem; margin: 0 0 4px; }
+  .lead { margin: 0 0 20px; color: var(--sub); font-size: .95rem; }
+  .nb { display: inline-block; } /* 言葉の途中で改行しない */
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* ===== 上に残る目次（スマホでも文字を残す・押せる高さ44px） ===== */
+  .nav { position: sticky; top: 0; z-index: 10; background: rgba(253,247,236,.96); border-bottom: 3px solid var(--wood); }
+  .nav .wrap { display: flex; align-items: center; gap: 7px; height: 58px; }
+  .nav .home { display: inline-flex; align-items: center; min-height: 44px; font-weight: bold; color: var(--ink); text-decoration: none; margin-right: auto; white-space: nowrap; }
+  .nav .home i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 2px; }
+  /* 目次＝ロゴと同じ積み木（色の箱＋クリームの面＋右に濃い側面・上に明るい面） */
+  .nav a.n {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 5px;
+    background: var(--c); border-radius: 7px; text-decoration: none; white-space: nowrap;
+    box-shadow: inset 0 4px 0 rgba(255,255,255,.35), 4px 0 0 var(--side), 0 3px 0 rgba(74,58,44,.25);
+    transition: transform .15s;
+  }
+  .nav a.n span { display: block; background: #fff8ee; color: var(--t); border-radius: 4px; padding: 3px 6px; font-size: .82rem; font-weight: bold; line-height: 1.3; }
+  .nav a.n:hover, .nav a.n:focus-visible { transform: translateY(-3px); } /* さわると積み上がる */
+  .nav .c1 { --c: var(--brown); --side: var(--roof); --t: var(--roof); }
+  .nav .c2 { --c: var(--red); --side: #c2473b; --t: #b23f33; }
+  .nav .c3 { --c: var(--yellow); --side: #c98a12; --t: #7a5208; }
+  .nav .c4 { --c: var(--green); --side: #4a9a50; --t: #2f7a39; }
+  .nav .c5 { --c: var(--blue); --side: #3a7cb8; --t: #2a6fb0; }
+  @media (prefers-reduced-motion: reduce) { .nav a.n { transition: none; } }
+  @media (max-width: 480px) {
+    .nav .home span { display: none; } /* 社名の文字は隠して、積み木の4色だけ */
+    .nav .wrap { gap: 6px; }
+    .nav a.n { padding: 4px; }
+    .nav a.n span { padding: 3px 4px; font-size: .78rem; }
+  }
+  @media (max-width: 340px) { .nav .wrap { gap: 5px; padding: 0 8px; } .nav a.n span { padding: 3px 3px; } }
+
+  /* ===== トップ ===== */
+  .hero { text-align: center; padding: 24px 0 8px; }
+  .hero h1 { margin: 0; line-height: 1; }
+  .hero h1 img { width: 100%; max-width: 320px; height: auto; }
+  .hero .catch { font-size: 1.35rem; font-weight: bold; margin: 6px 0 0; line-height: 1.6; text-wrap: balance; }
+  .note { display: inline-block; margin: 12px 0 0; padding: 4px 14px; background: var(--paper); border: 2px dashed var(--brown); border-radius: 999px; font-size: .85rem; }
+
+  .floor {
+    position: relative; margin: 24px auto 0; max-width: 560px; height: 156px;
+    background: linear-gradient(#fff6e6 0 68%, var(--wood) 68% 100%);
+    border: 4px solid var(--roof); border-radius: 14px; overflow: hidden;
+  }
+  .floor::before { content: ""; position: absolute; top: 14px; right: 18px; width: 46px; height: 34px; background: #d9ecfa; border: 3px solid var(--brown); border-radius: 4px; }
+  .floor .row { position: absolute; left: 0; right: 0; bottom: 18px; display: flex; justify-content: space-evenly; align-items: flex-end; }
+  .sprite { width: 36px; height: 42px; animation: hop 3.6s infinite steps(1); } /* ドット絵は3倍ちょうど（12×14マス） */
+  .row .sprite:nth-child(2) { animation-delay: .6s; }
+  .row .sprite:nth-child(3) { animation-delay: 1.2s; }
+  .row .sprite:nth-child(4) { animation-delay: 1.8s; }
+  .row .sprite:nth-child(5) { animation-delay: 2.4s; }
+  .row .sprite:nth-child(6) { animation-delay: 3s; }
+  @keyframes hop { 0%, 90% { transform: translateY(0); } 92% { transform: translateY(-6px); } }
+  .bubbles { position: absolute; top: 10px; left: 0; right: 0; height: 52px; }
+  .bubble {
+    position: absolute; left: 50%; transform: translateX(-50%); width: max-content; max-width: 78%;
+    background: var(--paper); border: 2px solid var(--ink); border-radius: 10px; padding: 2px 12px;
+    font-size: .85rem; line-height: 1.45; text-align: center; opacity: 0; animation: talk 16s infinite;
+  }
+  .bubble:nth-child(2) { animation-delay: 4s; }
+  .bubble:nth-child(3) { animation-delay: 8s; }
+  .bubble:nth-child(4) { animation-delay: 12s; }
+  .bubble.boss { border-color: #c96a1e; }
+  /* 社長のドット絵：オレンジの服＋頭の上に「社長」の札。ふだんの社員より少し大きい（4倍） */
+  .bossbox { display: flex; flex-direction: column; align-items: center; }
+  .bossbox .crown { font-size: .7rem; font-weight: bold; line-height: 1.3; color: #fff; background: #c96a1e; border-radius: 4px; padding: 0 5px; margin-bottom: 2px; }
+  .sprite.boss { width: 48px; height: 56px; }
+  @media (max-width: 380px) { .sprite.boss { width: 36px; height: 42px; } }
+  @keyframes talk { 0% { opacity: 0; } 3%, 22% { opacity: 1; } 25%, 100% { opacity: 0; } }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 18px auto 0; max-width: 560px; }
+  .stat { background: var(--paper); border: 3px solid var(--ink); border-radius: 8px; padding: 6px 4px; box-shadow: 0 3px 0 var(--ink); }
+  .stat b { display: block; font-size: 1.3rem; line-height: 1.3; }
+  .stat span { font-size: .75rem; color: var(--sub); }
+
+  .go { display: inline-flex; align-items: center; min-height: 44px; margin: 18px 0 0; padding: 0 22px; border-radius: 999px; background: var(--green-dk); color: #fff; font-weight: bold; text-decoration: none; box-shadow: 0 3px 0 #235c2b; }
+
+  .divider { height: 14px; margin: 36px 0 0; background: linear-gradient(90deg, var(--red) 0 25%, var(--yellow) 25% 50%, var(--green) 50% 75%, var(--blue) 75% 100%); background-size: 112px 14px; opacity: .85; }
+
+  /* ===== 帯 ===== */
+  .band { padding: 40px 0; }
+  @media (min-width: 768px) { .band { padding: 56px 0; } }
+  .band.white { background: var(--paper); }
+  .band.dark { background: var(--roof); color: #fff8ee; }
+  .band.dark .lead { color: #fff8ee; }
+  .tag { display: inline-block; font-size: .78rem; font-weight: bold; color: #fff; padding: 0 10px; border-radius: 4px; background: var(--c); }
+  .tag.dk { color: var(--ink); }
+  #inside { --c: var(--yellow); } #about { --c: var(--red-dk); } #staff { --c: var(--yellow); } #works { --c: var(--green-dk); } #history { --c: var(--blue-dk); }
+
+  /* ===== 1. 社内のようす（いちばんの見せ場） ===== */
+  .tools { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .tool { background: var(--paper); color: var(--ink); border-radius: 16px; padding: 18px; box-shadow: 0 4px 0 rgba(0,0,0,.18); }
+  .tool .kicker { font-size: .78rem; color: var(--sub); }
+  .tool ul { margin: 10px 0 0; padding-left: 1.2em; font-size: .9rem; line-height: 1.7; }
+  .img-note { display: block; margin-top: 8px; font-size: .75rem; color: var(--sub); }
+
+  /* 本部の図（イメージ。中身は作りもの） */
+  .hq { border: 4px solid var(--ink); border-radius: 14px; overflow: hidden; background: var(--cream); font-size: .82rem; }
+  .hq .top { background: var(--ink); color: #fff; padding: 4px 10px; font-weight: bold; display: flex; justify-content: space-between; }
+  .hq .top i { font-style: normal; font-weight: normal; }
+  .hq .today { margin: 8px; background: var(--paper); border-radius: 10px; padding: 6px 10px; border-left: 6px solid var(--yellow); }
+  .hq .today b { display: block; font-size: .8rem; }
+  .hq .rows { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0 8px 8px; }
+  .hq .cell { background: var(--paper); border-radius: 8px; padding: 6px 8px; line-height: 1.4; }
+  .hq .cell small { display: block; color: var(--sub); font-size: .75rem; }
+  .hq .dot { display: inline-block; min-width: 1.5em; padding: 0 4px; border-radius: 999px; background: var(--red-dk); color: #fff; font-size: .75rem; text-align: center; }
+
+  .hqtool { border-top: 8px solid var(--yellow); }
+  .hqtool h3 { font-size: 1.3rem; }
+  .hqtool .catch2 { display: block; font-size: 1rem; color: var(--roof); }
+  .hqgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 16px; align-items: start; margin-top: 8px; }
+  .hq .tasks { margin: 0 8px 8px; background: var(--paper); border-radius: 10px; padding: 4px 8px; }
+  .hq .task { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px dashed #eadcc6; line-height: 1.4; }
+  .hq .task:last-child { border-bottom: 0; }
+  .hq .task i { flex: none; width: 13px; height: 13px; border: 2px solid var(--brown); border-radius: 50%; }
+  .hq .task.done { color: var(--sub); text-decoration: line-through; }
+  .hq .task.done i { background: var(--green); border-color: var(--green); }
+  .hq .task em { font-style: normal; font-size: .75rem; color: var(--blue-dk); margin-left: auto; white-space: nowrap; }
+  .hq .aib { margin-left: auto; font-size: .75rem; background: var(--yellow); color: var(--ink); border-radius: 999px; padding: 0 6px; white-space: nowrap; animation: blink 1.6s infinite steps(1); }
+  @keyframes blink { 0%, 60% { opacity: 1; } 61% { opacity: .55; } }
+  .powers { display: grid; gap: 10px; }
+  .power { background: var(--cream); border-radius: 12px; padding: 10px 12px; font-size: .88rem; line-height: 1.65; border-left: 6px solid var(--yellow); }
+  .power b { display: block; font-size: 1rem; color: var(--ink); margin-bottom: 2px; }
+  .power:nth-child(2) { border-left-color: var(--blue); } .power:nth-child(3) { border-left-color: var(--green); }
+
+  /* フロアの図（机つき） */
+  .office { position: relative; height: 176px; border: 4px solid var(--ink); border-radius: 14px; overflow: hidden; background: linear-gradient(#fff6e6 0 55%, var(--wood) 55% 100%); }
+  .office .desk { position: absolute; bottom: 24px; width: 66px; height: 22px; background: var(--brown); border-radius: 4px; box-shadow: inset 0 -5px 0 rgba(0,0,0,.18); }
+  .office .desk::before { content: ""; position: absolute; left: 20px; top: -16px; width: 26px; height: 16px; background: #3b4a5a; border-radius: 3px 3px 0 0; } /* 画面 */
+  .office .who { position: absolute; bottom: 38px; width: 36px; height: 42px; }
+  .office .tagname { position: absolute; bottom: 3px; font-size: .75rem; background: var(--paper); border-radius: 4px; padding: 0 5px; white-space: nowrap; line-height: 1.5; }
+  .office .say { position: absolute; top: 10px; font-size: .78rem; background: var(--paper); border: 2px solid var(--ink); border-radius: 8px; padding: 0 6px; white-space: nowrap; }
+  .office .zzz { position: absolute; top: 14px; right: 12px; font-size: .78rem; color: var(--sub); }
+  .working { animation: type 1.2s infinite steps(1); }
+  @keyframes type { 0%, 50% { transform: translateY(0); } 51% { transform: translateY(-2px); } }
+
+  /* 1日の流れ */
+  .day { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .day li { background: rgba(255,255,255,.06); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 10px 12px; font-size: .88rem; line-height: 1.6; }
+  .day li b { display: block; font-size: .98rem; color: #fff; }
+  .day li span { font-size: 1.2rem; }
+  .day li small { font-size: .8rem; }
+
+  /* 守りのきまり */
+  .safe { margin: 18px 0 0; background: var(--paper); color: var(--ink); border-radius: 14px; padding: 14px 16px; border: 3px dashed var(--green-dk); }
+  .safe h3 { color: var(--green-dk); }
+  .safe ul { margin: 6px 0 0; padding-left: 1.2em; font-size: .88rem; line-height: 1.7; }
+
+  /* ===== 2. 会社案内 ===== */
+  .greet { background: var(--cream); border-radius: 14px; padding: 18px 20px; margin: 0 0 20px; border-left: 8px solid #f08a3c; }
+  .greet h3 { color: var(--roof); }
+  .greet p { margin: 0 0 10px; font-size: .95rem; }
+  .greet .sign { text-align: right; font-weight: bold; margin: 12px 0 0; }
+  .greet .sign small { display: block; font-weight: normal; font-size: .8rem; color: var(--sub); }
+  .blocks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .block { min-width: 0; border-radius: 10px; padding: 12px 3px; text-align: center; font-weight: bold; box-shadow: inset 0 -6px 0 rgba(0,0,0,.15); font-size: clamp(.8rem, 3.4vw, .95rem); line-height: 1.5; overflow-wrap: anywhere; }
+  .block small { display: block; font-weight: normal; font-size: .75rem; }
+  .b1 { background: var(--red-dk); color: #fff; } .b2 { background: var(--yellow); color: var(--ink); } .b3 { background: var(--blue-dk); color: #fff; }
+  @media (max-width: 360px) { .blocks { grid-template-columns: 1fr; } }
+
+  /* ===== 3. 社員 ===== */
+  .staff { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .member { background: var(--cream); border-radius: 14px; padding: 14px; display: flex; gap: 12px; align-items: flex-start; border: 2px solid #f1e4cf; }
+  .member .face { flex: none; width: 56px; height: 64px; background: var(--paper); border-radius: 10px; display: grid; place-items: center; box-shadow: inset 0 -4px 0 #f1e4cf; }
+  .member .face svg { width: 36px; height: 42px; }
+  .member .role { font-size: .78rem; color: var(--sub); }
+  .member .name { font-weight: bold; font-size: 1.05rem; line-height: 1.4; }
+  .member p { margin: 4px 0 0; font-size: .88rem; line-height: 1.6; }
+  .member .quote { display: block; margin-top: 4px; font-size: .82rem; color: var(--roof); }
+  .member .like { display: inline-block; margin-top: 6px; font-size: .78rem; background: var(--paper); border: 1px solid #ead9c0; border-radius: 999px; padding: 0 8px; }
+  .boss-note { font-size: .82rem; color: var(--roof); margin: 8px 0 0; text-align: left; background: #fff4e8; border-radius: 8px; padding: 6px 8px; }
+  .boss-note b { color: #b05a14; }
+  .stack li i { display: block; font-style: normal; font-size: .82rem; color: var(--sub); }
+  footer .nojob { display: block; margin-top: 4px; font-size: .78rem; }
+
+  /* ===== 4. 作ったもの ===== */
+  .works { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .work { background: var(--paper); color: var(--ink); border-radius: 14px; padding: 16px; text-align: center; box-shadow: 0 4px 0 rgba(74,58,44,.15); }
+  .phone { width: 140px; height: 280px; margin: 0 auto 12px; border: 5px solid var(--ink); border-radius: 18px; background: var(--cream); overflow: hidden; }
+  .phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .work .name { font-weight: bold; }
+  .work .scene { margin: 2px 0 0; font-size: .9rem; color: var(--roof); font-weight: bold; text-align: center; }
+  .work p { margin: 4px 0 0; font-size: .88rem; text-align: left; }
+  .work a { display: inline-flex; align-items: center; min-height: 44px; margin-top: 10px; padding: 0 22px; border-radius: 999px; background: var(--green-dk); color: #fff; font-weight: bold; text-decoration: none; box-shadow: 0 3px 0 #235c2b; }
+  .work .nolink { display: inline-block; margin-top: 10px; font-size: .8rem; color: var(--sub); }
+
+  /* ===== 5. 沿革 ===== */
+  .stack { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column-reverse; gap: 6px; }
+  .stack li { background: var(--cream); border-left: 10px solid var(--c2); border-radius: 8px; padding: 8px 14px; font-size: .92rem; }
+  .stack li b { display: inline-block; min-width: 5.5em; color: var(--sub); font-weight: normal; }
+  .stack li:nth-child(1) { --c2: var(--red); } .stack li:nth-child(2) { --c2: var(--yellow); }
+  .stack li:nth-child(3) { --c2: var(--green); } .stack li:nth-child(4) { --c2: var(--blue); }
+
+  /* ===== おわりに ===== */
+  .thanks { background: var(--cream); text-align: center; padding: 36px 0; }
+  .thanks p { margin: 0 0 12px; }
+  .thanks .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .thanks .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 999px; font-weight: bold; text-decoration: none; }
+  .thanks .a1 { background: var(--green-dk); color: #fff; box-shadow: 0 3px 0 #235c2b; }
+  .thanks .a2 { background: var(--paper); color: var(--ink); border: 3px solid var(--ink); }
+
+  footer { background: var(--ink); color: #f6e7d4; text-align: center; font-size: .82rem; padding: 18px 16px 26px; }
+  footer .top { display: inline-flex; align-items: center; min-height: 44px; color: #fff; text-decoration: none; }
+
+  @media (prefers-reduced-motion: reduce) { .sprite, .bubble, .working, .hq .aib { animation: none; } .bubble:first-child { opacity: 1; } }
+  @media (max-width: 420px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body id="top">
+
+<!-- ドット絵の社員（1つの形を色だけ変えて使う。色は style で指定＝古いiPhoneでも出る） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="p" viewBox="0 0 12 14" shape-rendering="crispEdges">
+    <rect x="3" y="0" width="6" height="1" style="fill:var(--hair)"/>
+    <rect x="2" y="1" width="8" height="2" style="fill:var(--hair)"/>
+    <rect x="2" y="3" width="1" height="2" style="fill:var(--hair)"/>
+    <rect x="9" y="3" width="1" height="2" style="fill:var(--hair)"/>
+    <rect x="3" y="3" width="6" height="4" fill="#f6d2b0"/>
+    <rect x="4" y="4" width="1" height="1" fill="#3b2f26"/>
+    <rect x="7" y="4" width="1" height="1" fill="#3b2f26"/>
+    <rect x="5" y="6" width="2" height="1" fill="#e58f86"/>
+    <rect x="2" y="7" width="8" height="5" style="fill:var(--shirt)"/>
+    <rect x="1" y="8" width="1" height="3" fill="#f6d2b0"/>
+    <rect x="10" y="8" width="1" height="3" fill="#f6d2b0"/>
+    <rect x="5" y="7" width="2" height="2" style="fill:var(--tie, var(--shirt))"/>
+    <rect x="3" y="12" width="2" height="2" fill="#3b2f26"/>
+    <rect x="7" y="12" width="2" height="2" fill="#3b2f26"/>
+  </symbol>
+</svg>
+
+<nav class="nav" aria-label="目次">
+  <div class="wrap">
+    <a class="home" href="#top" aria-label="つみっこ舎（いちばん上へ）"><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--green)"></i><i style="background:var(--blue)"></i><span>&nbsp;つみっこ舎</span></a>
+    <a class="n c1" href="#inside"><span>社内</span></a>
+    <a class="n c2" href="#about"><span>案内</span></a>
+    <a class="n c3" href="#staff"><span>社員</span></a>
+    <a class="n c4" href="#works"><span>作品</span></a>
+    <a class="n c5" href="#history"><span>沿革</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <h1><img src="logo-full.png" width="1008" height="648" fetchpriority="high" alt="つみっこ舎"></h1>
+    <p class="catch"><span class="nb">保育士とAIの社員たちが、</span><span class="nb">小さなアプリを</span><span class="nb">積み木みたいに作る</span><span class="nb">会社ごっこ。</span></p>
+    <p class="note">ここは個人の趣味の会社ごっこです</p>
+
+    <div class="floor" role="img" aria-label="フロアで働く社長と社員6人のドット絵">
+      <div class="bubbles">
+        <span class="bubble">副社長「今日も1つ、積みましょう」</span>
+        <span class="bubble">企画部長「作る前に、外すものを決めます」</span>
+        <span class="bubble">開発部「できました…！」</span>
+        <span class="bubble boss">社長「さて、コーヒーを淹れましょう」</span>
+      </div>
+      <div class="row">
+        <svg class="sprite" style="--hair:#5a4030;--shirt:#4f98d8;--tie:#e8685a"><use href="#p"/></svg>
+        <svg class="sprite" style="--hair:#2f2a28;--shirt:#e8685a"><use href="#p"/></svg>
+        <span class="bossbox"><span class="crown" aria-hidden="true">社長</span><svg class="sprite boss" style="--hair:#3a2a1e;--shirt:#f08a3c;--tie:#fff8ee"><use href="#p"/></svg></span>
+        <svg class="sprite" style="--hair:#8a5a3c;--shirt:#6dbb72"><use href="#p"/></svg>
+        <svg class="sprite" style="--hair:#3b3b55;--shirt:#8a7462"><use href="#p"/></svg>
+        <svg class="sprite" style="--hair:#6b3f2a;--shirt:#f0b23a"><use href="#p"/></svg>
+        <svg class="sprite" style="--hair:#2f2a28;--shirt:#c98bb9"><use href="#p"/></svg>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>2026.7</b><span>はじめた</span></div>
+      <div class="stat"><b>10本+</b><span>作ったアプリ</span></div>
+      <div class="stat"><b>6人</b><span>AIの社員</span></div>
+      <div class="stat"><b>3つ</b><span>外に見せるアプリ</span></div>
+    </div>
+
+    <a class="go" href="#works">さわれるアプリは2つ ▼</a>
+  </header>
+</div>
+
+<div class="divider" aria-hidden="true"></div>
+
+<!-- 1. 社内のようす（濃い帯＝いちばんの見せ場） -->
+<section id="inside" class="band dark">
+  <div class="wrap">
+    <span class="tag dk">1 社内のようす</span>
+    <h2>つみっこ舎の本社は、<span class="nb">「本部」と「フロア」。</span></h2>
+    <p class="lead">社長だけが使う、手づくりの社内の道具です。外には公開していないので、ここでは図で紹介します。</p>
+
+    <div class="tools">
+      <!-- 本部 -->
+      <div class="tool hqtool">
+        <div class="kicker">社長の机 ・ つみっこ舎の心臓</div>
+        <h3>🏠 本部 <span class="catch2">決めたことは、ぜんぶ本部に。</span></h3>
+        <div class="hqgrid">
+          <div class="hq" role="img" aria-label="本部の画面のイメージ図。今日の帯とやることの一覧">
+            <div class="top">本部 <i>☀ 今日</i></div>
+            <div class="today"><b>今日のつみっこ舎</b>天気・予定・届いたものが、ここに1列でまとまる</div>
+            <div class="tasks">
+              <div class="task done"><i></i>HPの写真をたしかめる <em>#会社</em></div>
+              <div class="task"><i></i>コーヒー豆を買う <em>@明日</em></div>
+              <div class="task ai"><i></i>冬のおでかけ先を調べる <span class="aib">🤖 AI作業中</span></div>
+              <div class="task"><i></i>週の振り返り <em>🔁 毎週</em></div>
+            </div>
+            <div class="rows">
+              <div class="cell">☀ 朝礼 <span class="dot">3</span><small>夜のうちの報告を選ぶ</small></div>
+              <div class="cell">📦 受け渡し箱 <span class="dot">2</span><small>スマホとPCで渡しあう</small></div>
+            </div>
+          </div>
+          <div class="powers">
+            <div class="power"><b>☑ やることは、1行で投げ込む</b>「豆を買う @明日」と打てば、期限つきで入る。毎週・毎月のくり返しもおまかせ。予定は見るだけ、やることは本部に一本化。</div>
+            <div class="power"><b>🤖 タスクごとに、AIの相棒</b>やることを開くと、そのタスク専用にAIと話せる。調べものは裏で進むので、待たずに次へ。</div>
+            <div class="power"><b>📱 どの端末からでも、同じ机</b>スマホ・PC・タブレットのどれから開いても同じ。📦受け渡し箱で、端末どうしで渡しあえる。</div>
+          </div>
+        </div>
+        <span class="img-note">※図はイメージです。本物の画面や、本当のやることは載せていません。</span>
+      </div>
+
+      <!-- フロア -->
+      <div class="tool">
+        <div class="kicker">社員の仕事場</div>
+        <h3>🏢 フロア</h3>
+        <div class="office" role="img" aria-label="フロアのイメージ図。机で社員が働いている">
+          <span class="say" style="left:12px">調べてきます！</span>
+          <span class="zzz">夜勤明け… zzz</span>
+          <div class="desk" style="left:6%"></div>
+          <svg class="who working" style="left:calc(6% + 15px);--hair:#3b3b55;--shirt:#8a7462"><use href="#p"/></svg>
+          <span class="tagname" style="left:calc(6% + 8px)">調査員</span>
+          <div class="desk" style="left:38%"></div>
+          <svg class="who working" style="left:calc(38% + 15px);--hair:#8a5a3c;--shirt:#6dbb72;animation-delay:.4s"><use href="#p"/></svg>
+          <span class="tagname" style="left:calc(38% + 8px)">開発部</span>
+          <div class="desk" style="left:70%"></div>
+          <svg class="who" style="left:calc(70% + 15px);--hair:#6b3f2a;--shirt:#f0b23a"><use href="#p"/></svg>
+          <span class="tagname" style="left:calc(70% + 14px)">総務</span>
+        </div>
+        <ul>
+          <li>社員がドット絵で働く仕事場。頼むと自分の席で作業を始めます</li>
+          <li>働いている人は動き、手が空いた人は休む。<b>見た目と本当の状態をそろえる</b>のがこだわり</li>
+          <li>大事な操作の前は、社長に「これで進めていい？」と確認が届きます</li>
+        </ul>
+        <span class="img-note">※図はイメージです。会話の中身は載せていません。</span>
+      </div>
+    </div>
+
+    <!-- 1日の流れ -->
+    <ol class="day">
+      <li><span>🌙</span><b>夜</b>夜勤の社員が、調べものや見直しをして報告書を置いていく</li>
+      <li><span>☀</span><b>朝</b>社長が本部で朝礼<small>（朝に報告を読む時間）</small>。「採用・却下」を決める</li>
+      <li><span>☕</span><b>すきま時間</b>フロアで副社長に相談。社員に仕事をふり分ける</li>
+      <li><span>🔍</span><b>公開の前</b>総務が新しい目で見直してから、外に出す</li>
+    </ol>
+
+    <!-- 守りのきまり（これもアピール） -->
+    <div class="safe">
+      <h3>🔒 守りのきまり</h3>
+      <ul>
+        <li>本部とフロアはインターネットに公開していません。使えるのは社長だけ</li>
+        <li>家族・職場・子どもの情報は、外に出しません（このページにも載せていません）</li>
+        <li>お金・送信・公開は、必ず社長が確かめてから</li>
+        <li>社員が触ってよい場所を決めて、秘密のファイルは読めないようにしています</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 会社案内 -->
+<section id="about" class="band white">
+  <div class="wrap story">
+    <span class="tag">2 会社案内</span>
+    <h2>困りごとから、1つずつ。</h2>
+    <div class="greet">
+      <h3>ごあいさつ</h3>
+      <p>つみっこ舎のページを見てくださって、ありがとうございます。</p>
+      <p>はじまりは「使いたいアプリが見つからないなら、自分で作ってみよう」という小さな思いつきでした。いまはAI（Claude）の社員たちと相談しながら、コーヒーの淹れ方や毎日の献立のような、暮らしの中の「ちょっと困った」を1つずつアプリにしています。</p>
+      <p>作りすぎず、使って選ぶ。小さな会社ですが、よかったら1つ、さわってみてください。</p>
+      <p class="sign">つみっこ舎 社長<small>（本業は保育士。趣味で運営しています）</small></p>
+    </div>
+    <div class="blocks">
+      <div class="block b1">作りすぎない<small>増やすより、使う</small></div>
+      <div class="block b2">使って選ぶ<small>残すのは使うものだけ</small></div>
+      <div class="block b3">1つ足したら<br>1つ外す<small>見る場所をふやさない</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 社員 -->
+<section id="staff" class="band white" style="padding-top:0">
+  <div class="wrap">
+    <span class="tag dk">3 社員</span>
+    <h2>はたらく6人</h2>
+    <p class="lead">みんなAIです。それぞれ得意な仕事だけを受け持っています。</p>
+    <div class="staff">
+      <div class="member"><div class="face"><svg style="--hair:#5a4030;--shirt:#4f98d8;--tie:#e8685a"><use href="#p"/></svg></div>
+        <div><div class="role">副社長</div><div class="name">副島タスケ</div><p>社長の右腕。話を聞いて、社員に仕事をふり分けます。</p><span class="quote">「それ、今やるものですか？」</span><span class="like">好き：やることリストが減る瞬間</span></div></div>
+      <div class="member"><div class="face"><svg style="--hair:#2f2a28;--shirt:#e8685a"><use href="#p"/></svg></div>
+        <div><div class="role">企画部長</div><div class="name">企田カクゾウ</div><p>アイデア出しと設計図づくり。書いては消します。</p><span class="quote">「完成の条件から決めましょう」</span><span class="like">好き：まっさらなホワイトボード</span></div></div>
+      <div class="member"><div class="face"><svg style="--hair:#8a5a3c;--shirt:#6dbb72"><use href="#p"/></svg></div>
+        <div><div class="role">開発部</div><div class="name">開ハツオ</div><p>設計図どおりに作る係。1回に1つ直して確かめます。</p><span class="quote">「できました…！」</span><span class="like">好き：はじめて動いた瞬間</span></div></div>
+      <div class="member"><div class="face"><svg style="--hair:#3b3b55;--shirt:#8a7462"><use href="#p"/></svg></div>
+        <div><div class="role">調査員</div><div class="name">調サトル</div><p>Webの調べもの担当。結論から、出典つきで。</p><span class="quote">「公式にはこう書いてあります」</span><span class="like">好き：出典のリンク</span></div></div>
+      <div class="member"><div class="face"><svg style="--hair:#6b3f2a;--shirt:#f0b23a"><use href="#p"/></svg></div>
+        <div><div class="role">総務</div><div class="name">総田ムツミ</div><p>公開前の見直し役。漏れや危ないところを探します。</p><span class="quote">「ここ、もう一度見ましょう」</span><span class="like">好き：全部に○がついたチェック表</span></div></div>
+      <div class="member"><div class="face"><svg style="--hair:#2f2a28;--shirt:#c98bb9"><use href="#p"/></svg></div>
+        <div><div class="role">秘書</div><div class="name">菱ショウコ</div><p>毎週の振り返り係。1週間を点数でまとめます。</p><span class="quote">「今週は何点でしょう」</span><span class="like">好き：週末の振り返り</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 作ったもの -->
+<section id="works" class="band">
+  <div class="wrap">
+    <span class="tag">4 作ったもの</span>
+    <h2>外でも使えるアプリ</h2>
+    <p class="lead">作ったものの中から、外に見せられる3つです。</p>
+    <div class="works">
+      <div class="work">
+        <div class="phone"><img src="shot-kissa.webp" width="280" height="560" alt="my喫茶の画面（データの入っていない状態）" loading="lazy"></div>
+        <div class="name">my喫茶</div>
+        <p class="scene">毎朝、同じ味のコーヒーを淹れたい人に。</p>
+        <p>淹れ方をタイマーで案内して、好みの一杯を記録できます。</p>
+        <p class="boss-note"><b>社長より：</b>あとから入れるのは大変なので、名人の淹れ方など、40件ほどを最初から入れました。</p>
+        <a href="https://rusiberu.github.io/my-kissa/" aria-label="my喫茶をさわってみる">さわってみる</a>
+      </div>
+      <div class="work">
+        <div class="phone"><img src="shot-recipe.webp" width="280" height="560" alt="レシピ帳の画面（データの入っていない状態）" loading="lazy"></div>
+        <div class="name">レシピ帳</div>
+        <p class="scene">今夜の献立から、買い物リストまで。</p>
+        <p>家のレシピをまとめて、選んだ献立の材料をそのまま買い物リストにできます。</p>
+        <p class="boss-note"><b>社長より：</b>勉強もかねて作った、はじめてインターネットに公開したアプリです。</p>
+        <a href="https://rusiberu.github.io/recipe-ap/" aria-label="レシピ帳をさわってみる">さわってみる</a>
+      </div>
+      <div class="work">
+        <div class="phone"><img src="shot-poikatsu.webp" width="280" height="560" alt="ポイ活手帳の画面（データの入っていない状態）" loading="lazy"></div>
+        <div class="name">ポイ活手帳</div>
+        <p class="scene">毎日のポイ活を、1か所で数える。</p>
+        <p>アプリごとのポイントを記録して、たまった合計をグラフで見られます。</p>
+        <p class="boss-note"><b>社長より：</b>納得できるポイ活アプリが見つからなかったので、自分で作りました。</p>
+        <span class="nolink">ここでは紹介だけにしています</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. 沿革 -->
+<section id="history" class="band white">
+  <div class="wrap">
+    <span class="tag">5 沿革</span>
+    <h2>これまでに積んだもの</h2>
+    <ul class="stack">
+      <li><b>2026年7月</b>AIとアプリ作りをはじめる<i>社長のひとこと：最初は、言われるままにボタンを押していました</i></li>
+      <li><b>2026年8月</b>「レシピ帳」をはじめてインターネットに公開<i>社長のひとこと：自分のスマホで開けたとき、ちょっと感動</i></li>
+      <li><b>2026年10月</b>社長の机「本部」ができる<i>社長のひとこと：ある動画に背中を押されて、全部を1つにまとめたくなった</i></li>
+      <li><b>2026年11月</b>「my喫茶」を公開／会社ごっこ「つみっこ舎」をはじめる／社員が働く「フロア」ができる<i>社長のひとこと：ロゴの積み木の家を決めた日が、いちばん楽しかった</i></li>
+    </ul>
+  </div>
+</section>
+
+<!-- おわりに -->
+<section class="thanks">
+  <div class="wrap">
+    <p>ここまで読んでくれて、ありがとうございます。<br>さわれるのは <b>my喫茶</b> と <b>レシピ帳</b> です。</p>
+    <div class="links">
+      <a class="a1" href="#works">作ったものへ ▲</a>
+      <!-- noteへのリンクは、noteを「開発の遍歴・アプリ紹介」に育ててから足す（11/26 社長） -->
+    </div>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true" style="margin:0"></div>
+<footer>
+  <a class="top" href="#top">▲ いちばん上へ</a><br>
+  © つみっこ舎（個人の趣味の会社ごっこ）
+  <span class="nojob">お仕事のご依頼・採用・取材は受け付けていません</span>
+</footer>
+</body>
+</html>
